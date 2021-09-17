@@ -1,5 +1,5 @@
-function Food({fav}) {
-  return <h1>I like {fav}</h1>;
+function Food({name}) {
+  return <h1>I like {name}</h1>;
 }
 
 const foodILike = [
@@ -28,7 +28,7 @@ const foodILike = [
 function App() {
   return (
     <div>
-      <h1>Hello React</h1>
+      {foodILike.map(dish => (<Food name = {dish.name} />))}
     </div>
   );
 }
