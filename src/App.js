@@ -4,6 +4,15 @@ class App extends React.Component {
   state = {
     count: 0,
   };
+
+  add = () => {
+    console.log('add');
+  };
+
+  minus = () => {
+    console.log('minus');
+  };
+  
   render() {
     return (
       <div>
