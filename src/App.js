@@ -1,7 +1,8 @@
-function Food({name, picture}) {
+function Food({name, picture, rating}) {
   return (
     <div>
       <h2>I like {name}</h2>
+      <h4>{rating}/5.0</h4>
       <img src = {picture} alt = {name} />
     </div>
   );
@@ -44,10 +45,16 @@ function App() {
   return (
     <div>
       {
-        foodILike.map(dish => (<Food key = {dish.id} name = {dish.name} picture = {dish.image} />
+        foodILike.map(dish => (<Food key = {dish.id} name = {dish.name} picture = {dish.image} rating = {dish.rating} />
       ))}
     </div>
   );
 }
+
+Food.propTypes = {
+  name: PropTypes.string.isRequired,
+  picture: PropTypes.string.isRequired,
+  rating: PropTypes.string.isRequired,
+};
 
 export default App;
