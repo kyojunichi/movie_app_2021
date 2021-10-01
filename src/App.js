@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types'
+
 function Food({name, picture, rating}) {
   return (
     <div>
