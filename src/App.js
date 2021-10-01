@@ -35,6 +35,7 @@ function renderFood(dish) {
 }
 
 function App() {
+  console.log(foodILike.map(renderFood));
   return (
     <div>
       {foodILike.map(renderFood)}
