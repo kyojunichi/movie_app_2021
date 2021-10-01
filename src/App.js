@@ -30,15 +30,12 @@ const foodILike = [
   },
 ];
 
-function renderFood(dish) {
-  return <Food name = {dish.name} picture = {dish.image} />
-}
-
 function App() {
-  console.log(foodILike.map(renderFood));
   return (
     <div>
-      {foodILike.map(renderFood)}
+      {
+        foodILike.map(dish => (<Food name={dish.name} picture={dish.image} />
+      ))}
     </div>
   );
 }
