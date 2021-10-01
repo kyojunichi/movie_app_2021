@@ -15,7 +15,7 @@ const foodILike = [
     id: 1,
     name: 'Kimchi',
     image: 'https://cdn.imweb.me/thumbnail/20200415/6b6e035658bac.png',
-    rating: 5,
+    rating: 5.0,
   },
   {
     id: 2,
@@ -56,7 +56,7 @@ function App() {
 Food.propTypes = {
   name: PropTypes.string.isRequired,
   picture: PropTypes.string.isRequired,
-  rating: PropTypes.number.isRequired,
+  rating: PropTypes.number,
 };
 
 export default App;
