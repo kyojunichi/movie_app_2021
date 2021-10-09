@@ -1,5 +1,69 @@
 # 姜準一(강준일) 201840202
 
+## [10月6日]
+
+### 학습내용(學習內容)
+
+- 생명주기함수(生命週期函數)
+    - constructor()함수(函數)
+        - constructor()는 Component를 생성(生成)할 때 state값을 초기화(初期化)하거나 메서드를 바인딩할 때 사용(使用)
+        - render()함수(函數)보다 constructor()함수(函數)가 먼저 실행(實行)
+    - componentDidMount()함수(函數)
+        - 컴포넌트가 처음 화면(畫面)에 그려지면 실행(實行)되는 함수(函數)
+        - render()함수(函數)가 실행(實行)된 직후(直後) componentDidMount()함수(函數)가 실행(實行)
+    - componentDidUpdate()함수(函數)
+        - 화면(畫面)이 업데이트되면 실행(實行)
+        - 버튼을 클릭하면 setState()함수(函數)가 실행(實行)
+        - render()함수(函數)로 화면(畫面)이 업데이트된 직후(直後) componentDidUpdate()함수(函數)가 실행(實行)
+    - componentWillUnmount() 함수(函數)
+        - 컴포넌트가 화면(畫面)에서 떠날 때 실행(實行)
+        - 보통(普通) 컴포넌트에 적용(適用)한 이벤트 리스너를 제거(除去)할 때 많이 사용(使用)
+
+- 영화(映畫) 앱 만들기 시작(始作)
+- 영화(映畫) 데이터 로딩 상태(狀態)를 표시(表示)
+    - isLoading state를 추가(追加)
+    - isLoading state는 아직 데이터가 없기 때문에 확인(確認)을 위해 true로 세팅
+    - 구조분해할당(構造分解割當)으로 this.state에 있는 isLoading을 상수(常數)로 선언(宣言)하여 앞으로 this.state를 쓰지 않아도 되게 함
+    - 삼항연산자(三項演算子)를 사용(使用)해서 isLoading이 true면 「Loading...」 을 출력(出力)하고 false면 「We are ready」 를 출력(出力)
+
+- 로딩 현상(現象) 구현(具現)
+    - setTimeout()함수(函數)를 적용(適用)하여 구현(具現)
+    - setTimeout()함수(函數)는 첫 번째 인자(因子)로 전달(傳達)한 함수(函數)를 두 번째 인자(因子)로 전달(傳達)한 값(밀리秒) 후(後)에 실행(實行)
+    - setTimeout()함수(函數)의 첫 번째 인자(因子)는 실행(實行)할 함수(函數)이고、두 번째 인자(因子)로 전달(傳達)한 값은 지연시간(遲延時間)
+    - 생명주기함수(生命週期函數)인 componentDidMount()함수(函數)를 사용(使用)하여 먼저 Render()函數가 수행(遂行)된 다음 setTimeout()함수(函數)를 실행(實行)
+
+- axios 설치(設置)
+
+- JSON Viewer 확장도구(擴張道具)를 설치(設置)
+
+- 노마드 코더 영화(映畫) API를 영화(映畫) 앱에서 호출(呼出)
+
+- 영화(映畫) API 사용(使用)해보기
+    - getMovies()함수(函數)를 작성(作成)
+    - getMovies()함수(函數) 內에서 axios.get()이 실행(實行)하도록 한다
+    - axios.get()의 return값은 movies에 저장(貯藏)
+    - 이 때 자바스크립트에게 getMovies()함수(函數)는 시간(時間)이 필요(必要)하다는 것을 알리기 위해 async、await를 사용(使用)
+
+- 영화(映畫) 데이터 화면(畫面)에 그리기
+    - console.log()함수(函數)로 영화(映畫) 데이터 출력(出力)
+    - 객체(客體)에 있는 movie키에 접근(接近)
+    - movies state에 영화(映畫) 데이터 저장(貯藏)
+    - isLoading state를 true에서 false로 업데이트
+
+- Movie 컴포넌트 작성(作成)
+    - Movie 컴포넌트는 state가 필요(必要)하지 않으므로 클래스형(型) 컴포넌트가 아닌 함수형(函數型) 컴포넌트로 작성(作成)
+    - Movie에 넘어와야 하는 영화(映畫) 데이터를 정의(定義)하고 관리(管理)하기 위해 prop-types를 사용(使用)
+
+- Movie.propTypes 작성(作成)
+    - id는 자료형(資料型)이 Number이고 필(必)히 있어야 하니까 PropTypes.number.isRequired로 작성(作成)
+    - year、title、summary、poster도 각각(各々) Movie.propTypes에 추가(追加)
+
+- 노마드 코더 영화(映畫) API 정렬기능(整列機能) 사용(使用)
+
+- axios.get() 수정(修正)
+    - axios.get()에 yts-proxy.now.sh/list_movies.json?sort_by=rating을 전달(傳達)
+    - 평점(評點) 내림차순(次順)으로 영화(映畫) 데이터를 가져올 수 있게 되었음
+
 
 ## [9月29日]
 
