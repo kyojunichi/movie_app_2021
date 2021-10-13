@@ -5,7 +5,7 @@ function Movie() {
     return <h1></h1>;
 }
 
-Movie.PropTypes = {
+Movie.propTypes = {
     id: PropTypes.number.isRequired,
     year: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
