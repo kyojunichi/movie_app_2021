@@ -1,6 +1,495 @@
 # 姜準一(강준일) 201840202
 
 
+# [10月27日]
+
+# 학습내용(學習內容)
+
+## li 엘리먼트에 key props 추가(追加)하기
+- 그런데 genre에는 key값으로 사용(使用)하기에 적당(適當)한 id값 같은 것이 없음。
+- 이럴 경우(境遇) 새롭게 만들어 내야 하는데、map()함수(函數)에는 2번(繁)째 매개변수(媒介變數)를 지정(指定)할 경우(境遇) 배열(配列)의 index 값을 반환(返還)해 주는 기능(機能)이 있다。
+- 이것을 이용(利用)해서 배열(配列)의 인덱스를 key props로 활용(活用)하는 것이다。
+- console을 확인(確認)해 본다。
+- Movie.js 수정(修正)
+```javascript
+<ul className="movie__genres">
+    {genres.map((genre, index) => {
+        return(
+            <li key={index} className="movie__genre">
+                 {genre}
+            </li>
+        )
+    })}
+</ul>
+```
+
+# 07-2 영화(映畫) 앱 멋지게 스타일링하기
+
+## App.css 파일 수정(修正)하기
+- 사이트 전체(全體)에서 사용(使用)할 기본적(基本的)인 글꼴、배경(背景) 등(等)을 설정(設定)한다。
+- App.css 수정(修正)
+```css
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #eff3f7;
+    height: 100%;
+}
+```
+
+## Movie.css 파일 수정(修正)하기
+- 계속(繼續)하여 Movie.css파일을 수정(修正)
+- Movie.css 수정(修正)
+```css
+.movies .movie {
+    background-color: white;
+    margin-bottom: 70px;
+    font-weight: 300;
+    padding: 20px;
+    border-radius: 5px;
+    color: #adaeb9;
+    box-shadow: 0 13px 27px -5px rgba(50, 50, 93, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.3), 0 -6px 16px -6px rgba(0, 0, 0, 0.025);
+}
+
+.movies .movie a {
+    display: grid;
+    grid-template-columns: minmax(150px, 1fr) 2fr;
+    grid-gap: 20px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.movie img {
+    position: relative;
+    top: -50px;
+    max-width: 150px;
+    width: 100%;
+    margin-right: 30px;
+    box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.25), 0 18px 36px -18px rgba(0, 0, 0, 0.3), 0 -12px 36px -8px rgba(0, 0, 0, 0.025);
+}
+
+.movie .movie__title,
+.movie .movie__year {
+    margin: 0;
+    font-weight: 300;
+}
+
+.movie .movie__title {
+    margin-bottom: 5px;
+    font-size: 24px;
+    color: #2c2c2c;
+}
+
+.movie .movie__genres {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 5px 0px;
+}
+
+.movie__genres li,
+.movie .movie__year {
+    margin-right: 10px;
+    font-size: 14px;
+}
+```
+
+## 시놉시스 180자(字)로 제한(制限)하기
+- 자바스크립트의 slice함수(函數)를 이용(利用)하여 구현(具現)한다。
+- Movie.js 수정(修正)
+```javascript
+<p className="movie__summary">{summary.slice(0, 180)}...</p>
+```
+
+## 영화(映畫) 앱 제목(題目) 관찰(觀察)하기
+- 현재(現在) 영화(映畫) 앱의 제목(題目)은 create-react-app에서 지정(指定)한 기본(基本)값인 React App으로 설정(設定)되어있음。
+
+## 영화(映畫) 앱 제목(題目) 변경(變更)
+- public폴더의 index.html에서 title을 수정(修正)
+- index.html 수정(修正)
+```html
+<title>Movie App</title>
+```
+
+# 08-1 react-router-dom 설치(設置)하고 프로젝트 폴더 정리(整理)하기
+
+## react-router-dom 설치(設置)하기
+- react-router-dom 패키지를 설치(設置)
+- 하단(下段)에 작성(作成)되어있는 코드를 명령(命令)프롬프트에 입력(入力)
+```
+> npm install react-router-dom
+```
+
+## components 폴더에 Movie 컴포넌트 옮기기
+- src폴더 內에 components폴더를 생성(生成)하고 Movie컴포넌트들을 이동(移動)
+
+## routes 폴더에 라우터가 보여줄 화면(畫面) 작성(作成)하기
+- src폴더 內에 routes폴더를 생성(生成)하고 Home.js와 About.js 파일 생성(生成)
+
+## Home.js 수정(修正)하기
+- App.js내용(內容)을 Home.js로 복사(複寫)하고 컴포넌트 이름을 Home으로 수정(修正)
+- Home.css를 생성(生成)하고 Home.js에 import한다。
+```javascript
+import React from 'react';
+import axios from 'axios';
+import Movie from '../components/Movie';
+import './Home.css';
+
+class Home extends React.Component {
+    …
+}
+
+export default Home;
+```
+
+## Home.css 작성(作成)하기
+- Home.css파일을 작성(作成)
+```css
+.container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+  
+.loader {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 300;
+}
+.movies {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(400px, 1fr));
+    grid-gap: 100px;
+    padding: 50px;
+    width: 80%;
+    padding-top: 70px;
+}
+  
+@media screen and (max-width: 1090px) {
+    .movies {
+      grid-template-columns: 1fr;
+      width: 100%;
+    }
+}
+```
+
+## App.js 수정(修正)하기
+- App.js 내용(內容)을 Home.js로 복사(複寫)하고 컴포넌트명(名)을 Home으로 수정(修正)
+- App.js 수정(修正)
+```javascript
+import React from "react";
+import Home from "./routes/Home";
+import './App.css';
+
+function App() {
+  return <Home />;
+}
+
+export default App;
+```
+
+# 08-2 라우터 만들어 보기
+
+## HashRouter와 Route 컴포넌트 사용(使用)하기
+- HashRouter와 Router컴포넌트 import한다。
+- HashRouter컴포넌트가 Route컴포넌트를 감싸 반환(返還)하도록 App.js를 수정(修正)
+- Home을 import했던 코드는 잠시(暫時) 지운다。
+- Route에는 2가지 props를 전달(傳達)할 수 있다。하나는 URL을 위한 path props고、또 하나는 URL에 맞는 컴포넌트를 불러주기 위한 component props이다。
+- App.js 수정(修正)
+```javascript
+import React from "react";
+import './App.css';
+import { HashRouter, Route } from 'react-router-dom';
+
+function App() {
+  return (
+    <HashRouter>
+      <Route />
+    </HashRouter>
+  );
+}
+
+export default App;
+```
+
+## Route 컴포넌트에 path、component props 추가(追加)하기
+- About 컴포넌트를 import한다。
+- path、component props에 URL과 About컴포넌트를 전달(傳達)
+- App.js 수정(修正)
+```javascript
+import React from "react";
+import './App.css';
+import { HashRouter, Route } from 'react-router-dom';
+import About from './routes/About';
+
+function App() {
+  return (
+    <HashRouter>
+      <Route path="/about" component={About} />
+    </HashRouter>
+  );
+}
+
+export default App;
+```
+
+## About.js 수정(修正)하기
+- About.js의 내용(內容)이 비어 있으니 간단(簡單)하게 채우자。
+- About.js 수정(修正)
+```javascript
+import React from "react";
+
+function About() {
+    return <span>About this page: I built it because I love movies.</span>;
+}
+
+export default About;
+```
+
+## 라우터 테스트해 보기
+- localhost:3000/#에 path props로 전달(傳達)했던 값 /about을 붙여 다시 접속(接屬)
+- URL은 localhost:3000/#/about이고、액션3에서 작성(作成)했던 내용(內容)이 출력(出力)
+- 이것은 Route 컴포넌트에 전달(傳達)한 path props를 보고 component props에 지정(指定)한 About 컴포넌트를 그려 준 것이다。
+
+## Home 컴포넌트를 위(爲)한 Route컴포넌트 추가(追加)하기
+- App컴포넌트에 Home컴포넌트를 import하고、또 다른 Route컴포넌트를 추가(追加)
+- path props를 「/」 으로 입력(入力)한 이유(理由)는 localhost:3000에 접속(接屬)하면 기본(基本)으로 보여줄 컴포넌트를 Home 컴포넌트로 하기 위해서이다。
+- App.js 수정(修正)
+```javascript
+import React from "react";
+import './App.css';
+import { HashRouter, Route } from 'react-router-dom';
+import About from './routes/About';
+import Home from "./routes/Home";
+
+function App() {
+  return (
+    <HashRouter>
+      <Route path="/" component={Home} />
+      <Route path="/about" component={About} />
+    </HashRouter>
+  );
+}
+
+export default App;
+```
+
+## 라우터 테스트하고 문제(問題) 찾아보기
+- localhost:3000에 접속(接屬)하면 주소(住所) 뒤에 자동(自動)으로 /#/가 붙으면서 영화(映畫) 앱 화면(畫面)이 나타난다。
+- 금번(今番)에는 /about에도 접속(接屬)해 본다。당연(當然)히 About컴포넌트만 출력(出力)되야 함에도、Movie컴포넌트가 함께 출력(出力)
+
+## 라우터 자세(仔細)히 관찰(觀察)하기
+- App컴포넌트에 라우터를 다음과 같이 구성(構成)
+- App.js 수정(修正)
+```javascript
+import React from "react";
+import './App.css';
+import { HashRouter, Route } from 'react-router-dom';
+import About from './routes/About';
+import Home from "./routes/Home";
+
+function App() {
+  return (
+    <HashRouter>
+      <Route path="/home">
+        <h1>Home</h1>
+      </Route>
+      <Route path="/home/introduction">
+        <h1>Introduction</h1>
+      </Route>
+      <Route path="/about">
+        <h1>About</h1>
+      </Route>
+    </HashRouter>
+  );
+}
+
+export default App;
+```
+
+## 라우터 다시 테스트해 보기
+- /home에 접속(接屬)하면 문제(問題)가 없어 보이지만、/home/introduction에 접속(接屬)하면 Home이 함께 나오는 문제(問題)는 여전(如前)
+- 라우터는 사용자(使用者)가 /home/introduction에 접속(接屬)하면 /、/home、/home/introduction 순서(順序)로 path props가 있는지를 찾는다。그런데 이들 모드가 path props를 가지고 있기 때문에 introduction에 접속(接屬)하면 이 모든 것이 보이는 것
+- 이와 같은 이유(理由)로 /about에 접속(接屬)하면 /、/about 순서(順序)로 path props를 찾기 때문에 Home과 About컴포넌트는 모두 출력(出力)되는 것
+
+## App 다시 원래(元來)대로 복원(復元)하기
+- App.js를 액션08에서 테스트했던 이전(以前) 상태(狀態)로 복원(復元)
+- App.js 수정(修正)
+```javascript
+import React from "react";
+import './App.css';
+import { HashRouter, Route } from 'react-router-dom';
+import About from './routes/About';
+import Home from "./routes/Home";
+
+function App() {
+  return (
+    <HashRouter>
+      <Route path="/" component={Home} />
+      <Route path="/about" component={About} />
+    </HashRouter>
+  );
+}
+
+export default App;
+```
+
+## Route 컴포넌트에 exact props 추가(追加)해 보기
+- path props가 "/" 인 Route컴포넌트에 exact={true}를 추가(追加)
+- App.js 수정(修正)
+```javascript
+import React from "react";
+import './App.css';
+import { HashRouter, Route } from 'react-router-dom';
+import About from './routes/About';
+import Home from "./routes/Home";
+
+function App() {
+  return (
+    <HashRouter>
+      <Route path="/" exact={true} component={Home} />
+      <Route path="/about" component={About} />
+    </HashRouter>
+  );
+}
+
+export default App;
+```
+
+## About.css 작성(作成)하기
+- route폴더 內에 About.css파일을 생성(生成)하고、css코드를 작성(作成)
+- About.js에 About.css를 import하고、적용(適用)할 수 있도록 내용(內容)도 수정(修正)
+- About.css 작성(作成)
+```css
+.about__container {
+    box-shadow: 0 13px 27px -5px rgba(50, 50, 93, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.3),
+      0 -6px 16px -6px rgba(0, 0, 0, 0.025);
+    padding: 20px;
+    border-radius: 5px;
+    background-color: white;
+    margin: 0 auto;
+    margin-top: 100px;
+    width: 100%;
+    max-width: 400px;
+    font-weight: 300;
+  }
+  
+  .about__container span:first-child {
+    font-size: 20px;
+  }
+  .about__container span:last-child {
+    display: block;
+    margin-top: 10px;
+  }
+```
+
+## About.js 수정(修正)하기
+- About.js에 About.css를 import
+- 적용(適用)할 수 있도록 내용(內容)도 수정(修正)
+- About.js 수정(修正)
+```javascript
+import React from "react";
+import './About.css';
+
+function About() {
+    return (
+        <div className="about__container">
+            <span>
+                "Freedom is the freedom to say that two plus two make four. If that is granted, all else follows."
+            </span>
+            <span>- George Orwell, 1984</span>
+        </div>
+    );
+}
+
+export default About;
+```
+
+# 08-3 내비게이션 만들어 보기
+
+## Navigation 컴포넌트 작성(作成)
+- Home과 About이라는 2개(個)의 버튼을 생성(生成)하고、각각(各々)의 버튼을 눌렀을 때 해당(該當) 화면(畫面)이 보이도록 할 것이다。
+- 먼저 components폴더 內에 Navigation.js파일을 생성(生成)하고、2개(個)의 a 태그를 반환(返還)하도록 작성(作成)
+- Navigation.js 작성(作成)
+```javascript
+import React from 'react';
+
+function Navigation() {
+  return (
+    <div>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+    </div>
+  );
+}
+
+export default Navigation;
+```
+
+## Navigation 컴포넌트 App 컴포넌트에 포함(包含)시키기
+- App컴포넌트에 Navigation을 import시키고、<HashRoute>에서 불러오게 한다。
+- 앱을 실행(實行)하면 Navigation이 출력(出力)되는 것을 확인(確認) 가능(可能)
+- App.js 수정(修正)
+```javascript
+import React from "react";
+import './App.css';
+import { HashRouter, Route } from 'react-router-dom';
+import About from './routes/About';
+import Home from "./routes/Home";
+import Navigation from "./components/Navigation";
+
+function App() {
+  return (
+    <HashRouter>
+      <Navigation />
+      <Route path="/" exact={true} component={Home} />
+      <Route path="/about" component={About} />
+    </HashRouter>
+  );
+}
+
+export default App;
+```
+
+## Home링크 눌러 보기
+- Home링크를 눌러본다。
+- 링크를 클릭할 때마다 리액트가 죽고、새 페이지가 열리는 문제(問題)가 발생(發生)
+- 원인(原因)은 a태그의 href속성(屬性)이 페이지 전체(全體)를 다시 그리는 성질(性質)을 가지고 있기 때문이다。
+- 이대로라면 필요(必要)한 부분(部分)만 다시 그려주는 리액트를 써야할 이유(理由)가 없다。
+- 이 문제(問題)를 해결(解決)하려면 react-router-dom의 Link컴포넌트를 사용(使用)하면 된다。
+
+## a 엘리먼트를 Link 컴포넌트로 변경(變更)하기
+- Navigation컴포넌트에 Link컴포넌트를 import하고 a태그를 Link컴포넌트로 변경(變更)
+- href속성(屬性)은 to로 수정(修正)
+- 앱을 실행(實行)하고 링크를 클릭해 본다。페이지 전체(全體) 문제(問題)가 해결(解決)된 것을 확인(確認) 가능(可能)
+- Navigation.js 수정(修正)
+```javascript
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+function Navigation() {
+  return (
+    <div>
+      <Link to="/">Home</Link>
+      <Link to="/about">About</Link>
+    </div>
+  );
+}
+
+export default Navigation;
+```
+
+
 # [10月13日]
 
 # 학습내용(學習內容)
