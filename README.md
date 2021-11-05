@@ -5,6 +5,300 @@
 
 # 학습내용(學習內容)
 
+## Navigation 컴포넌트 위치(位置) 재차(再次) 확인(確認)하기
+- 혹시(或是) 실수(失手)로 Navigation 컴포넌트를 HashRouter 바깥에 위치(位置)시켰는지 컴포넌트의 위치(位置)를 재차(再次) 확인(確認)
+
+## Navigation 컴포넌트 스타일링하기
+- components 폴더에 Navigation.css 파일을 생성(生成)
+- 그 후(後) 이하(以下)와 같이 Navigation.css를 작성(作成)
+```css
+.nav {
+    z-index: 1;
+    position: fixed;
+    top: 50px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 10px 20px;
+    box-shadow: 0 13px 27px -5px rgba(50, 50, 93, 0.25),
+      0 8px 16px -8px rgba(0, 0, 0, 0.3), 0 -6px 16px -6px rgba(0, 0, 0, 0.025);
+    border-radius: 5px;
+  }
+  
+  @media screen and (max-width: 1090px) {
+    .nav {
+      left: initial;
+      top: initial;
+      bottom: 0px;
+      width: 100%;
+    }
+  }
+  
+  .nav a {
+    text-decoration: none;
+    color: #0008fc;
+    text-transform: uppercase;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  .nav a:not(:last-child) {
+    margin-bottom: 20px;
+  }
+```
+- Navigation.css 작성(作成) 후(後)、Navigation.js 수정(修正)
+```javascript
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './Navigation.css';
+
+function Navigation() {
+  return (
+    <div className="nav">
+      <Link to="/">Home</Link>
+      <Link to="/about">About</Link>
+    </div>
+  );
+}
+
+export default Navigation;
+```
+
+# 08-4 영화(映畫) 상세(詳細) 정보(情報) 기능(機能) 만들어 보기
+
+## route props 관찰(觀察)하기
+- 우선(于先) console.log()를 통(通)해 About으로 어떤 props가 넘어오는지 관찰(觀察)
+```javascript
+import React from "react";
+import './About.css';
+
+function About(props) {
+    console.log(props);
+    return (
+        <div className="about__container">
+            <span>
+                "Freedom is the freedom to say that two plus two make four. If that is granted, all else follows."
+            </span>
+            <span>- George Orwell, 1984</span>
+        </div>
+    );
+}
+
+export default About;
+```
+
+## route props에 데이터 담아 보내기
+- route props에 데이터를 전송(傳送)하려면 Navigation 컴포넌트에 있는 Link 컴포넌트의 to props의 구조(構造)를 변경(變更)해야함。
+- 이하(以下)와 같이 Navigation 컴포넌트 /about으로 전송(傳送)해주는 Link 컴포넌트의 to props를 수정(修正)
+- Navigation.js 수정(修正)
+```javascript
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './Navigation.css';
+
+function Navigation() {
+  return (
+    <div className="nav">
+      <Link to="/">Home</Link>
+      <Link to={{ pathname: '/about', state: { fromNavigation: true }}}>About</Link>
+    </div>
+  );
+}
+
+export default Navigation;
+```
+
+## route props 재차(再次) 관찰(觀察)하기
+- /about으로 이동(移動)한 다음 [Console] 탭에서 [location]을 확인(確認)
+- state 키에서 우리가 전송(傳送)한 데이터를 확인(確認) 가능(可能)
+
+## Navigation 컴포넌트 정리(整理)하기
+- 직전(直前)까지 작성(作成)한 코드는 사용(使用)하지 않을 것
+- 그러므로 Navigation 컴포넌트를 원상태(原狀態)로 복구(復舊)
+- Navigation.js 수정(修正)
+```javascript
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './Navigation.css';
+
+function Navigation() {
+  return (
+    <div className="nav">
+      <Link to="/">Home</Link>
+      <Link to="/about">About</Link>
+    </div>
+  );
+}
+
+export default Navigation;
+```
+
+## Movie 컴포넌트에 Link 컴포넌트 추가(追加)하기
+- Movie 컴포넌트에 Link 컴포넌트를 임포트
+- Link 컴포넌트에 to props를 작성(作成)
+- Movie.js 수정(修正)
+```javascript
+import React from "react";
+import PropTypes from 'prop-types';
+import './Movie.css';
+import { Link } from 'react-router-dom';
+
+function Movie({ title, year, summary, poster, genres }) {
+    return (
+        <div className="movie">
+            <Link
+                to={{
+                    pathname: '/Movie-detail',
+                    state: { year, title, summary, poster, genres },
+                }}
+            >
+                <img src={poster} alt={title} title={title} />
+                <div className="movie__data">
+                    <h3 className="movie__title">{title}</h3>
+                    <h5 className="movie__year">{year}</h5>
+                    <ul className="movie__genres">
+                        {genres.map((genre, index) => {
+                            return(
+                                <li key={index} className="movie__genre">
+                                    {genre}
+                                </li>
+                            )
+                        })}
+                    </ul>
+                    <p className="movie__summary">{summary.slice(0, 180)}...</p>
+                </div>
+            </Link>
+        </div>
+    );
+}
+
+Movie.propTypes = {
+    year: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    summary: PropTypes.string.isRequired,
+    poster: PropTypes.string.isRequired,
+    genres: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+
+export default Movie;
+```
+
+## Detail 컴포넌트 만들기
+- Detail 컴포넌트를 routes 폴더에 추가(追加)
+- Detail 컴포넌트에서 Movie 컴포넌트의 Link 컴포넌트가 전송(傳送)한 영화(映畫)데이터를 확인(確認)할 수 있도록 console.log()도 작성(作成)
+- Detail.js 작성(作成)
+```javascript
+import React from "react";
+
+function Detail(props) {
+  console.log(props);
+  return <span>hello</span>;
+}
+
+export default Detail;
+```
+
+## Route 컴포넌트 추가(追加)하기
+- App.js를 연 후(後)、Detail 컴포넌트를 임포트
+- Route 컴포넌트에서 Detail 컴포넌트를 그려주도록 코드를 작성(作成)
+- App.js 수정(修正)
+```javascript
+import React from "react";
+import './App.css';
+import { HashRouter, Route } from 'react-router-dom';
+import About from './routes/About';
+import Home from "./routes/Home";
+import Navigation from "./components/Navigation";
+import Detail from "./routes/Detail";
+
+function App() {
+  return (
+    <HashRouter>
+      <Navigation />
+      <Route path="/" exact={true} component={Home} />
+      <Route path="/about" component={About} />
+      <Route path="/movie-detail" component={Detail} />
+    </HashRouter>
+  );
+}
+
+export default App;
+```
+
+## 영화(映畫)카드를 눌러 /movie-detail로 이동(移動)한 후(後) 영화(映畫) 데이터 확인(確認)하기
+- 영화(映畫)카드를 눌러 /movie-detail로 이동(移動)
+- 화면(畫面)을 보면 Detail 컴포넌트가 출력(出力)하고 있는 hello라는 문장(文章)이 보인다。
+- [Console] 탭을 확인(確認)해보면 [location -> state]에 Movie 컴포넌트에서 Link 컴포넌트를 통(通)해 전송(傳送)해준 데이터가 들어 있다。
+
+## /movie-detail로 직접(直接) 이동(移動)하기
+- URL에 /movie-detail을 입력(入力)하여 직접(直接) 이동(移動)
+- [Console]탭에 영화(映畫)데이터가 있는지 확인(確認)
+- Detail 컴포넌트의 hello는 문제(問題)없이 출력(出力)
+- 하지만 [Console]탭에는 영화(映畫)데이터가 없다。
+- Detail 컴포넌트로 영화(映畫)데이터가 넘어오지 못한 것이다。
+- 이러한 경우(境遇)에는 사용자(使用者)를 강제(強制)로 Home으로 돌려보내야 한다。
+- 이러한 기능(機能)을 리다이렉트 기능(機能)라고 한다。
+
+# 08-5 리다이렉트 기능(機能) 만들어 보기
+
+## history 키 관찰(觀察)하기
+- 주소창(住所窓)에 localhost:3000를 입력(入力)하여 이동(移動)
+- 임의(任意)의 영화(映畫)카드를 눌러 이동(移動)
+- [Console]탭에서 [history]에 출력(出力)된 값을 펼쳐서 관찰(觀察)
+- 지정(指定)한 URL로 보내주는 push()함수(函數)를 사용(使用)할 것이다。
+
+## Detail 컴포넌트 클래스형(型) 컴포넌트로 변경(變更)하기
+- Detail 컴포넌트를 함수형(型)에서 클래스형(型) 컴포넌트로 변경(變更)
+- 그 후(後) location, history 키를 구조분해할당(構造分解割當)
+- Detail.js 수정(修正)
+```javascript
+import React from "react";
+
+class Detail extends React.Component {
+    componentDidMount() {
+      const { location, history } = this.props;
+    }
+
+    render() {
+      return <span>hello</span>;
+    }
+}
+
+export default Detail;
+```
+
+## push()함수(函數) 사용(使用)하기
+- location.state가 undefined인 경우(境遇) history.push("/")를 실행(實行)하도록 코드를 작성(作成)
+- Detail.js 수정(修正)
+```javascript
+import React from "react";
+
+class Detail extends React.Component {
+    componentDidMount() {
+        const { location, history } = this.props;
+        if (location.state === undefined) {
+            history.push('/');
+        }
+    }
+
+    render() {
+        return <span>hello</span>;
+    }
+}
+
+export default Detail;
+```
+
+## 리다이렉트 기능(機能) 확인(確認)해 보기
+- 영화(映畫)앱을 실행(實行)한 후(後) 직접(直接) 주소(住所)를 입력(入力)하여 /movie-detail으로 이동(移動)
+- 그러면 다시 Home으로 돌아오게 된다。
+
+# [10月27日]
+
+# 학습내용(學習內容)
+
 ## li 엘리먼트에 key props 추가(追加)하기
 - 그런데 genre에는 key값으로 사용(使用)하기에 적당(適當)한 id값 같은 것이 없음。
 - 이럴 경우(境遇) 새롭게 만들어 내야 하는데、map()함수(函數)에는 2번(繁)째 매개변수(媒介變數)를 지정(指定)할 경우(境遇) 배열(配列)의 index 값을 반환(返還)해 주는 기능(機能)이 있다。
