@@ -1,6 +1,151 @@
 # 姜準一(강준일) 201840202
 
 
+# [11月10日]
+
+# 학습내용(學習內容)
+
+## 映畫 題目 出力하기
+- 우선(于先) 영화(映畫) 제목(題目)부터 출력(出力)할 것
+- Movie 컴포넌트로부터 전달(傳達)받은 영화(映畫)데이터는 location.state에 들어 있음
+- Detail.js 수정(修正)
+```javascript
+import React from "react";
+
+class Detail extends React.Component {
+    componentDidMount() {
+        const { location, history } = this.props;
+        if (location.state === undefined) {
+            history.push('/');
+        }
+    }
+
+    render() {
+        const { location } = this.props;
+        return <span>{location.state.title}</span>;
+    }
+}
+
+export default Detail;
+```
+
+## /movie-detail로 바로 이동(移動)하기
+- 그런데 또 다시 /movie-detail로 바로 이동(移動)하면 오류(誤謬)가 발생(發生)
+- componentDidMount() 생명주기함수(生命週期函數)에 작성(作成)한 리다이렉트 기능(機能)이 동작(動作)하고 있지 않기 때문
+- Detail 컴포넌트의 실행(實行) 순서(順序) 때문에 location.state가 아까와 마찬가지로 undefined이기 때문
+
+## location.state 확인(確認)하기
+- location.state가 없으면 render()함수(函數)가 null을 반환(返還)하도록 수정(修正)
+- Detail.js 수정(修正)
+```javascript
+import React from "react";
+
+class Detail extends React.Component {
+    componentDidMount() {
+        const { location, history } = this.props;
+        if (location.state === undefined) {
+            history.push('/');
+        }
+    }
+
+    render() {
+        const { location } = this.props;
+        if (location.state) {
+            return <span>{location.state.title}</span>;
+        } else {
+            return null;
+        }
+    }
+}
+
+export default Detail;
+```
+- location.state가 없으면 render()함수(函數)가 null을 반환(返還)하도록 만들어서 문제(問題)없이 실행(實行)되도록 만들었음
+
+## package.json 파일 수정(修正)하기
+- 이제 영화(映畫)앱을 GitHub에 배포(配布)해 볼 것임
+- GitHub 주소(住所)를 영화(映畫)앱이 인식(認識)할 수 있도록 package.json 파일을 열어 수정(修正)
+- 계속(繼續)해서 scripts 키값으로 명령어(命令語)를 추가(追加)
+- package.json 수정(修正)
+```
+{
+  "name": "movie_app_2021",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "axios": "^0.22.0",
+    "gh-pages": "^3.2.3",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "4.0.3",
+    "web-vitals": "^1.1.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "homepage": "https://kyojunichi.github.io/movie_app_2021"
+}
+```
+
+## 최종(最終)코드 GitHub에 업로드하기
+- 이하(以下)의 명령어(命令語)를 입력(入力)하여 최종완성(最終完成)코드를 GitHub저장소(貯藏所)에 업로드
+```
+git add .
+git commit -m "최종완성(最終完成)코드"
+git push origin master
+```
+
+## gh-pages 설치(設置)하기
+- 최종완성(最終完成)코드를 GitHub저장소(貯藏所)에 업로드 후(後)
+- 배포(配布)서비스를 이용(利用)해서 타인(他人)들이 영화(映畫)앱을 사용(使用)할 수 있도록 해야함
+- GitHub에서 무료(無料)로 제공(提供)하는 GitHub Pages 서비스를 사용(使用)할 것임
+- 이하(以下)의 명령어(命令語)를 입력(入力)하여 gh-pages를 설치(設置)
+```
+npm install gh-pages
+```
+
+## GitHub저장소(貯藏所) 재차(再次) 확인(確認)하기
+- 이하(以下)의 명령어(命令語)를 입력(入力)하면 업로드한 GitHub저장소(貯藏所)의 주소(住所)를 확인(確認)할 수 있다
+```
+git remote -v
+```
+
+## 영화(映畫)앱 GitHub에 배포(配布)하기
+- 터미널에서 이하(以下)의 명령어(命令語)를 입력(入力)하여 영화(映畫)앱을 배포(配布)
+```
+npm run deploy
+```
+
+## GitHub Pages에 접속(接續)하여 영화(映畫)앱 확인(確認)하기
+- url에 「　https://[GitHub계정(計定)].github.io/[저장소명(貯藏所名)]　」을 입력(入力)
+- 그 후(後) GitHub에 배포(配布)한 영화(映畫)앱을 확인(確認)
+
 # [11月3日]
 
 # 학습내용(學習內容)
