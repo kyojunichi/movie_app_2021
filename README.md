@@ -1,6 +1,453 @@
 # 姜準一(강준일) 201840202
 
 
+# [12月1日]
+
+# 학습내용(學習內容)
+
+## 컴포넌트 추출(抽出)
+```javascript
+function Comment(props) {
+  return (
+    <div className="Comment">
+      <div className="UserInfo">
+        <img className="Avatar"
+          src={props.author.avatarUrl}
+          alt={props.author.name}
+        />
+        <div className="UserInfo-name">
+          {props.author.name}
+        </div>
+      </div>
+      <div className="Comment-text">
+        {props.text}
+      </div>
+      <div className="Comment-date">
+        {formatDate(props.date)}
+      </div>
+    </div>
+  );
+}
+```
+- 상단(上段)의 컴포넌트는 author(객체(客體))、text(문자열(文字列)) 및 date(날짜)를 props로 받을 후(後) 소셜 미디어 웹 사이트의 코멘트를 나타낸다。
+- 상단(上段)의 컴포넌트는 구성요소(構成要素)들이 모두 중첩구조(重疊構造)로 이루어져 있어서 변경(變更)하기 어려움이 있고、각(各) 구성요소(構成要素)를 개별적(個別的)으로 재사용(再使用)하기도 힘들다。
+- 이 컴포넌트에서 몇 가지 컴포넌트를 추출(抽出)하자。
+
+## Avatar 추출(抽出)
+```javascript
+function Avatar(props) {
+  return (
+    <img className="Avatar"
+      src={props.user.avatarUrl}
+      alt={props.user.name}
+    />
+  );
+}
+```
+- Avatar는 자신(自身)이 Comment 內에서 렌더링 된다는 것을 알 필요(必要)가 없다。
+- 그래서 props명(名)을 author에서 더욱 일반화(一般化)된 user로 변경(變更)。
+```javascript
+function Comment(props) {
+  return (
+    <div className="Comment">
+      <div className="UserInfo">
+        <Avatar user={props.author} />
+        <div className="UserInfo-name">
+          {props.author.name}
+        </div>
+      </div>
+      <div className="Comment-text">
+        {props.text}
+      </div>
+      <div className="Comment-date">
+        {formatDate(props.date)}
+      </div>
+    </div>
+  );
+}
+```
+- 1차(次) 단순화(單純化)
+```javascript
+function UserInfo(props) {
+  return (
+    <div className="UserInfo">
+      <Avatar user={props.user} />
+      <div className="UserInfo-name">
+        {props.user.name}
+      </div>
+    </div>
+  );
+}
+```
+- 사용자(使用者)의 이름을 렌더링하는 UserInfo 컴포넌트를 추출(抽出)。
+```javascript
+function Comment(props) {
+  return (
+    <div className="Comment">
+      <UserInfo user={props.author} />
+      <div className="Comment-text">
+        {props.text}
+      </div>
+      <div className="Comment-date">
+        {formatDate(props.date)}
+      </div>
+    </div>
+  );
+}
+```
+- 최종단순화(最終單純化)
+
+## props는 읽기 전용(專用)이다。
+- 함수(函數)컴포넌트나 클래스컴포넌트 모두 컴포넌트의 자체(自體) props를 수정(修正)해서는 안 된다。
+```javascript
+function sum(a, b) {
+  return a + b;
+}
+```
+- 위와 같은 함수(函數)들은 순수함수(純粹函數)라고 호칭(呼稱)한다。
+- 입력(入力)값을 바꾸려 하지 않고 항상(恒常) 동일(同一)한 입력(入力)값에 대(對)해 동일(同一)한 결과(結果)를 반환(返還)하기 때문。
+```javascript
+function withdraw(account, amount) {
+  account.total -= amount;
+}
+```
+- 반면(反面)에 위와 같은 함수(函數)는 자신(自身)의 입력(入力)값을 변경(變更)하기 때문에 순수함수(純粹函數)가 아니다。
+- 모든 React 컴포넌트는 자신(自身)의 props를 다룰 때 필(必)히 순수함수(純粹函數)처럼 동작(動作)해야한다。
+
+## State와 생명주기(生命週期)
+- 이전(以前)섹션에서 다뤄보았던 시계(時計) 예시(例示)를 통(通)하여 Clock 컴포넌트를 완전(完全)히 재사용(再使用)하고 캡슐화(化)하는 방법(方法)를 배워보자。
+```javascript
+function Clock(props) {
+  return (
+    <div>
+      <h1>Hello, world!</h1>
+      <h2>It is {props.date.toLocaleTimeString()}.</h2>
+    </div>
+  );
+}
+
+function tick() {
+  ReactDOM.render(
+    <Clock date={new Date()} />,
+    document.getElementById('root')
+  );
+}
+
+setInterval(tick, 1000);
+```
+- 위의 코드에는 중요(重要)한 요건(要件)이 누락(漏落)되어있다。
+- Clock이 타이머를 설정(設定)하고 매초(每秒) UI를 업데이트하는 것이 Clock의 구현(具現) 세부사항(細部事項)이 되어야 한다。
+- 한 번(番)만 코드를 작성(作成)하고 Clock이 스스로 업데이트하도록 만들 것이다。
+```javascript
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+);
+```
+- 이것을 구현(具現)하기 위(爲)해서는 Clock 컴포넌트에 「state」 를 추가(追加)해야한다。
+- State는 props와 유사(類似)하지만、비공개(非公開)이며 컴포넌트에 의(依)해 완전(完全)히 제어(制御)된다。
+
+## 함수(函數)에서 클래스로 변환(變換)하기
+
+- 5단계(段階)로 Clock과 같은 함수(函數)컴포넌트를 클래스로 변환(變換)할 수 있다。
+1. React.Component를 확장(擴張)하는 동일(同一)한 이름의 ES6 class를 생성(生成)。
+2. render()라고 불리는 빈 메서드를 추가(追加)。
+3. 함수(函數)의 내용(內容)을 render()메서드 안으로 이동(移動)。
+4. render() 내용(內容) 안에 있는 props를 this.props로 변경(變更)。
+5. 남아있는 빈 함수선언(函數宣言)을 삭제(削除)。
+```javascript
+class Clock extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.props.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+```
+- Clock은 이제 함수(函數)가 아닌 클래스로 정의(定義)된다。
+
+## 클래스에 로컬 State 추가(追加)하기
+
+3단계(段階)에 걸쳐서 date를 props에서 state로 이동(移動)시켜보자。
+1. render() 메서드 內에 있는 this.props.date를 this.state.date로 변경(變更)。
+```javascript
+class Clock extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+```
+2. 초기(初期) this.state를 지정(指定)하는 class constructor를 추가(追加)。
+```javascript
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {date: new Date()};
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+```
+- 어떠한 방식(方式)으로 props를 기본(基本)constructor에 전달(傳達)하는지 유의(留意)하자。
+```javascript
+constructor(props) {
+    super(props);
+    this.state = {date: new Date()};
+  }
+```
+- 클래스 컴포넌트는 항상(恒常) props로 기본(基本)constructor를 호출(呼出)해야한다。
+3. <Clock /> 요소(要素)에서 date prop을 삭제(削除)。
+```javascript
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+);
+```
+4. 결과물(結果物)
+```javascript
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {date: new Date()};
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+);
+```
+
+## 생명주기(生命週期)메서드를 클래스에 추가(追加)하기
+- Clock이 스스로 타이머를 설정(設定)하고 매초(每秒) 스스로 업데이트하도록 만들어보자。
+- Clock이 최초(最初) DOM에 렌더링 될 때마다 타이머를 설정(設定)할 것이다、이것은 React에서 「mounting」 이라고 한다。
+- 또한 Clock에 의(依)해 생성(生成)된 DOM이 삭제(削除)될 때마다 타이머를 해제(解除)하려고 한다、이것은 React에서 「unmounting」 이라고 한다。
+```javascript
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {date: new Date()};
+  }
+
+  componentDidMount() {
+  }
+
+  componentWillUnmount() {
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+```
+- 이러한 메서드들은 「생명주기(生命週期)메서드」 라고 호칭(呼稱)된다。
+- componentDidMount()메서드는 컴포넌트 출력물(出力物)이 DOM에 렌더링 된 후(後)에 실행(實行)된다。
+- 이 장소(場所)가 타이머를 설정(設定)하기에 좋은 장소(場所)이다。
+```javascript
+componentDidMount() {
+    this.timerID = setInterval(
+      () => this.tick(),
+      1000
+    );
+  }
+```
+- 위는 componentDidMount()메서드이다。
+- this (this.timerID)에서 어떻게 타이머ID를 제대로 저장(貯藏)하는지 주의(注意)하자。
+```javascript
+componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+```
+- componentWillUnmount()생명주기(生命週期)메서드 內에 있는 타이머를 분해(分解)。
+```javascript
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {date: new Date()};
+  }
+
+  componentDidMount() {
+    this.timerID = setInterval(
+      () => this.tick(),
+      1000
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    this.setState({
+      date: new Date()
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+);
+```
+- Clock 컴포넌트가 매초(每秒) 작동(作動)하도록 하는 tick()이라는 메서드를 구현(具現)。
+- 컴포넌트 로컬 state를 업데이트하기 위(爲)해 this.setState()를 사용(使用)。
+- 코드의 현재상황(現在狀況) 해설(解說)과 어떻게 호출(呼出)되는지 순서(順序)대로 요약(要約)하자면
+1. <Clock />가 ReactDOM.render()로 전달(傳達)되었을 때、React는 Clock 컴포넌트의 constructor를 호출(呼出)한다。Clock이 현재시각(現在時刻)을 표시(表示)해야 하기 때문에 현재시각(現在時刻)이 포함(包含)된 객체(客體)로 this.state를 초기화(初期化)한다。
+2. React는 Clock 컴포넌트의 render()메서드를 호출(呼出)하여 화면(畫面)에 표시(表示)되어야 할 내용(內容)을 알게 되고、그 후(後) Clock의 렌더링 출력(出力)값을 일치(一致)시키기 위(爲)해 DOM을 업데이트한다。
+3. Clock 출력(出力)값이 DOM에 삽입(揷入)되면、React는 componentDidMount() 생명주기(生命週期)메서드를 호출(呼出)하고 그 안에서 Clock 컴포넌트는 매초(每秒) 컴포넌트의 tick()메서드를 호출(呼出)하기 위(爲)한 타이머를 설정(設定)하도록 브라우저에 요청(要請)한다。
+4. 매초(每秒) 브라우저가 tick() 메서드를 호출(呼出)하고、그 안에서 Clock 컴포넌트는 setState()에 현재시각(現在時刻)을 포함(包含)하는 객체(客體)를 호출(呼出)하면서 UI 업데이트를 진행(進行)。setState() 호출 덕분에 React는 state가 변경(變更)된 것을 인지(認知)하고 화면(畫面)에 표시(表示)될 내용(內容)을 알아내기 위(爲)해 render()메서드를 다시 호출(呼出)하고 DOM을 업데이트한다。
+5. Clock컴포넌트가 DOM으로부터 한 번(番)이라도 삭제(削除)된 적이 있다면 React는 타이머를 멈추기 위(爲)해 componentWillUnmount()생명주기(生命週期)메서드를 호출(呼出)한다。
+
+## State를 올바르게 사용(使用)하기
+- setState()에 대(對)해서 알아야 할 3가지가 있다。
+
+### 직접(直接) State를 수정(修正)하지 않기
+```javascript
+// Wrong
+this.state.comment = 'Hello';
+
+// Correct
+this.setState({comment: 'Hello'});
+```
+- Wrong부분(部分)의 코드는 컴포넌트를 다시 렌더링하지 않는다。
+- 대신(代身)에 setState를 사용(使用)하여 Correct부분(部分)의 코드처럼 작성(作成)。
+- this.state를 지정(指定)할 수 있는 유일(唯一)한 공간(空間)은 바로 constructor이다。
+
+### State 업데이트는 비동기적(非同期的)일 수도 있다。
+```
+// Wrong
+this.setState({
+  counter: this.state.counter + this.props.increment,
+});
+
+// Correct
+this.setState((state, props) => ({
+  counter: state.counter + props.increment
+}));
+```
+- React는 성능(性能)을 위(爲)해 여러 setState()호출(呼出)을 단일(單一) 업데이트로 한꺼번에 처리(處理)할 수 있다。
+- this.props와 this.state가 비동기적(非同期的)으로 업데이트될 수 있기 때문에 다음 state를 계산(計算)할 때 해당(該當)값에 의존(依存)해서는 안 된다。
+
+### State 업데이트는 병합(倂合)된다。
+```javascript
+constructor(props) {
+    super(props);
+    this.state = {
+      posts: [],
+      comments: []
+    };
+  }
+
+componentDidMount() {
+  fetchPosts().then(response => {
+    this.setState({
+       posts: response.posts
+    });
+   });
+
+  fetchComments().then(response => {
+     this.setState({
+      comments: response.comments
+     });
+   });
+}
+```
+- setState()를 호출(呼出)할 때 React는 제공(提供)한 객체(客體)를 현재(現在) state로 병합(倂合)한다。
+- 병합(倂合)은 얕게 이루어지기 때문에 this.setState({comments})는 this.state.posts에 영향(影響)을 주진 않지만 this.state.comments는 완전(完全)히 대체(代替)된다。
+
+## 데이터는 아래로 흐른다。
+1. 부모(父母)컴포넌트나 자식(子息)컴포넌트 모두 특정(特定)컴포넌트가 유상태(有狀態)인지 또는 무상태(無狀態)인지 알 수 없고、그들이 함수(函數)나 클래스로 정의(定義)되었는지에 대(對)해서 관심(關心)을 가질 필요(必要)가 없다。이 때문에 state는 종종(種々) 로컬 또는 캡슐화(化)라고 호칭(呼稱)된다。state가 소유(所有)하고 설정(設定)한 컴포넌트 이외(以外)에는 어떠한 컴포넌트에도 접근(接近)할 수 없다。
+2. 컴포넌트는 자신(自身)의 state를 자식(子息)컴포넌트에 props로 전달(傳達)할 수 있다。
+3. 이를 「下向式(top-down)」 또는 「단방향식(單方向式)」 데이터 흐름이라고 한다。
+4. React 앱에서 컴포넌트가 有狀態(stateful) 또는 無狀態(stateless)에 대(對)한 것은 시간(時間)이 지남에 따라 변경(變更)될 수 있는 구현세부사항(具現細部事項)으로 간주(看做)한다。
+5. 有狀態(stateful)컴포넌트 內에서 無狀態(stateless)컴포넌트를 사용(使用)할 수 있으며、그 반대(反對)의 경우(境遇)도 마찬가지로 사용(使用)할 수 있다。
+
+## 이벤트 처리(處理)하기
+- React 엘리먼트에서 이벤트를 처리(處理)하는 방식(方式)은 DOM 엘리먼트에서 이벤트를 처리(處理)하는 방식(方式)과 매우 유사(類似)하다。
+- 하지만 몇 가지 문법(文法)의 차이(差異)가 있는데 다음과 같다。
+1. React의 이벤트는 소문자(小文字) 대신(代身) 캐멀케이스(camelCase)를 사용(使用)。
+2. JSX를 사용(使用)하여 문자열(文字列)이 아닌 함수(函數)로 이벤트 핸들러를 전달(傳達)。
+3. React에서는 false를 반환(返還)해도 기본동작(基本動作)을 방지(防止)할 수 없으며、필(必)히 preventDefault를 명시적(明示的)으로 호출(呼出)해야 한다。
+4. React를 사용(使用)할 때 DOM 엘리먼트가 생성(生成)된 후(後) 리스너를 추가(追加)하기 위(爲)해 addEventListener를 호출(呼出)할 필요(必要)가 없다。대신(代身)、엘리먼트가 최초(最初)로 렌더링될 때 리스너를 제공(提供)하면 된다。
+
+### 2번(番)에 대(對)한 예제(例題)
+```html
+<button onclick="activateLasers()">
+  Activate Lasers
+</button>
+```
+- HTML에서는 위와 같지만、
+
+```javascript
+<button onClick={activateLasers}>
+  Activate Lasers
+</button>
+```
+- React에서는 위와 같이 약간(若干)의 차이(差異)가 있다。
+
+### 3번(繁)에 대(對)한 예제(例題)
+```html
+<form onsubmit="console.log('You clicked submit.'); return false">
+  <button type="submit">Submit</button>
+</form>
+```
+- HTML에서는 위와 같지만、
+
+```javascript
+function Form() {
+  function handleSubmit(e) {
+    e.preventDefault();
+    console.log('You clicked submit.');
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+```
+- React에서는 위와 같이 작성(作成)할 수 있다。
+
+
 # [11月10日]
 
 # 학습내용(學習內容)
